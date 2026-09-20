@@ -2,6 +2,7 @@ name: "publish"
 
 on:
   push:
+    branches: [main]
     tags:
       - 'v*'
 
@@ -13,7 +14,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - platform: "macos-latest" # 对于 macOS 只有一种架构，github actions 会自动处理
+          - platform: "macos-latest"
+          - platform: "windows-latest"
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -36,13 +38,12 @@ jobs:
       - name: install frontend dependencies
         run: npm install
 
-      - uses: tauri-apps/tauri-action@v0
+      - uses: tauri-apps/tauri-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tagName: v__VERSION__ # tauri-action 会自动替换为 package.json 中的版本号
+          tagName: v__VERSION__
           releaseName: "dida-clone v__VERSION__"
           releaseBody: "See the assets below to download."
           releaseDraft: true
           prerelease: false
-          args: ""
